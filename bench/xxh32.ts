@@ -94,7 +94,7 @@ for (const benchCase of CASES) {
 
   if (wasmHash !== expected || xxhashjsHash !== expected) {
     throw new Error(
-      `hash mismatch: xxhx=${expected}, xxhash-wasm=${wasmHash}, xxhashjs=${xxhashjsHash}`,
+      `hash mismatch: xxhjs=${expected}, xxhash-wasm=${wasmHash}, xxhashjs=${xxhashjsHash}`,
     );
   }
 
@@ -104,7 +104,7 @@ for (const benchCase of CASES) {
 
   runBench(
     {
-      name: 'xxhx',
+      name: 'xxhjs',
       hash: () => xxh32(input, 0, input.length) >>> 0,
     },
     benchCase,

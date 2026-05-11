@@ -1,5 +1,5 @@
 {
-  "name": "xxhx",
+  "name": "xxhjs",
   "version": "0.3.0",
   "description": "xxHash in Javascript",
   "type": "module",
@@ -38,13 +38,13 @@
     }
   ],
   "bugs": {
-    "url": "https://github.com/seia-soto/xxhx/issues"
+    "url": "https://github.com/seia-soto/xxhjs/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/seia-soto/xxhx"
+    "url": "https://github.com/seia-soto/xxhjs"
   },
-  "homepage": "https://github.com/seia-soto/xxhx",
+  "homepage": "https://github.com/seia-soto/xxhjs",
   "keywords": [
     "xxhash",
     "xxh"
