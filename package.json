@@ -20,7 +20,7 @@
   "scripts": {
     "bench": "node --import=tsimp bench/xxh32.ts",
     "build": "tsc --project tsconfig.json",
-    "format": "prettier .",
+    "format": "prettier . --check --log-level error",
     "lint": "eslint src test bench eslint.config.js",
     "prepack": "pnpm lint && pnpm format && pnpm test && pnpm build",
     "test": "ava"
