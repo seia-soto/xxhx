@@ -1,32 +1,75 @@
 {
-  "name": "xxhashjs",
-  "version": "0.2.2",
+  "name": "xxhx",
+  "version": "0.3.0",
   "description": "xxHash in Javascript",
-  "main": "./lib/index.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./out/index.d.ts",
+      "import": "./out/index.js"
+    },
+    "./xxh32": {
+      "types": "./out/xxh32.d.ts",
+      "import": "./out/xxh32.js"
+    },
+    "./xxh32d64": {
+      "types": "./out/xxh32d64.d.ts",
+      "import": "./out/xxh32d64.js"
+    }
+  },
   "scripts": {
-    "test": "mocha",
-    "prepublish": "webpack && uglifyjs -m -c -o build/xxhash.min.js build/xxhash.js"
+    "bench": "node --import=tsimp bench/xxh32.ts",
+    "build": "tsc --project tsconfig.json",
+    "format": "prettier .",
+    "lint": "eslint src test bench eslint.config.js",
+    "prepack": "pnpm lint && pnpm format && pnpm test && pnpm build",
+    "test": "ava"
+  },
+  "license": "MIT",
+  "author": "HoJeong Go <seia@outlook.kr>",
+  "contributors": [
+    {
+      "name": "Pierre Curto",
+      "url": "https://github.com/pierrec"
+    },
+    {
+      "name": "HoJeong Go",
+      "url": "https://github.com/seia-soto"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/seia-soto/xxhx/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pierrec/js-xxhash"
+    "url": "https://github.com/seia-soto/xxhx"
   },
+  "homepage": "https://github.com/seia-soto/xxhx",
   "keywords": [
     "xxhash",
     "xxh"
   ],
-  "author": "Pierre Curto",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/pierrec/js-xxhash/issues"
-  },
-  "homepage": "https://github.com/pierrec/js-xxhash",
-  "dependencies": {
-    "cuint": "^0.2.2"
+  "ava": {
+    "extensions": [
+      "ts"
+    ],
+    "nodeArguments": [
+      "--import=tsimp"
+    ]
   },
   "devDependencies": {
-    "benchmark": "*",
-    "uglifyjs": "^2.4.11",
-    "webpack": "^3.10.0"
-  }
+    "@eslint/js": "^10.0.1",
+    "@types/xxhashjs": "^0.2.4",
+    "ava": "^8.0.0",
+    "eslint": "^10.3.0",
+    "fast-check": "^4.7.0",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "tsimp": "^2.0.12",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.2",
+    "xxhash-wasm": "^1.1.0",
+    "xxhashjs": "^0.2.2"
+  },
+  "packageManager": "pnpm@11.1.0+sha512.0c44e842e5686b2c061a81adda8b2258bd8818e9704b2cf2c63d56b931a7b2e910092e085027003b96ca3911ab56a07f6df5abaed2be9925034cdd686a535b14"
 }

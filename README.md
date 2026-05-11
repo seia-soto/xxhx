@@ -1,88 +1,89 @@
-# Javascript implementation of xxHash
+# xxhx
 
-## Synopsis
+`xxhx` is a fork of [`xxhashjs`](https://github.com/pierrec/js-xxhash)
+by Pierre Curto, refactored to use ES Module and Uint8Array.
 
-xxHash is a very fast hashing algorithm (see the details [here](https://github.com/Cyan4973/xxHash)). xxhashjs is a Javascript implementation of it, written in 100% Javascript. Although not as fast as the C version, it does perform pretty well given the current Javascript limitations in handling unsigned 32 bits integers.
+[xxHash](https://github.com/Cyan4973/xxHash) is a very fast
+hashing algorithm, and this library provides pure JavaScript
+implementation of xxHash32. It is valuable especially in the
+restrictive environment such as service worker or under strict
+CSP regulation.
 
+**Benchmark**
 
-## Installation
+The below is the output of `pnpm bench` on Apple M1 16GB running
+Node.JS v26.1.0 via macOS 26.4.1 (Darwin Kernel Version 25.4.0).
 
-In nodejs:
-
-    npm install xxhashjs
-
-In the browser, include the following, and access the constructor with _XXH_:
-
-```javascript
-<script src="/your/path/to/xxhash.js"></script>
+```
+Input: 64 B x 5,000,000
+xxhx            1810.76 MiB/s    0.169s check=0
+xxhash-wasm     1821.84 MiB/s    0.168s check=0
+xxhashjs         169.49 MiB/s    1.801s check=0
+Input: 512 B x 2,500,000
+xxhx            2450.47 MiB/s    0.498s check=0
+xxhash-wasm     4777.30 MiB/s    0.256s check=0
+xxhashjs         422.05 MiB/s    2.892s check=0
+Input: 1 KiB x 1,000,000
+xxhx            2507.81 MiB/s    0.389s check=0
+xxhash-wasm     5419.82 MiB/s    0.180s check=0
+xxhashjs         469.07 MiB/s    2.082s check=0
+Input: 64 KiB x 20,000
+xxhx            2594.97 MiB/s    0.482s check=0
+xxhash-wasm     6208.43 MiB/s    0.201s check=0
+xxhashjs         529.44 MiB/s    2.361s check=0
+Input: 1 MiB x 1,000
+xxhx            2582.26 MiB/s    0.387s check=0
+xxhash-wasm     6049.81 MiB/s    0.165s check=0
+xxhashjs         521.08 MiB/s    1.919s check=0
 ```
 
+**Installation**
 
-## Examples
-
-* In one step:
-```javascript
-var h = XXH.h32( 'abcd', 0xABCD ).toString(16)	// seed = 0xABCD
+```sh
+npm install xxhx
 ```
-> 0xCDA8FAE4
 
-* In several steps (useful in conjunction of NodeJS streams):
+## API
+
+### `xxh32(input: Uint8Array, beg: number, end: number): number`
+
 ```javascript
-var H = XXH.h32( 0xABCD )	// seed = 0xABCD
-var h = H.update( 'abcd' ).digest().toString(16)
+import { xxh32 } from 'xxhx';
+
+const input = new TextEncoder().encode('abcd');
+const hash = xxh32(input, 0, input.length);
+
+console.log(hash.toString(16));
 ```
-> 0xCDA8FAE4
 
-* More examples in the examples directory:
-	* Compute xxHash from a file data
-	* Use xxHashjs in the browser
+- `input` must be a `Uint8Array`.
+- `beg` and `end` are byte offsets.
+- The seed is **static**: `0x9e3779b1`.
+- The return value is an unsigned 32-bit integer.
 
+### `xxh32d64(input: Uint8Array, beg: number, end: number): bigint`
 
-## Usage
+```javascript
+import { xxh32d64 } from 'xxhx';
 
-* XXH makes 2 functions available for 32 bits XXH and 64 bits XXH respectively, with the same signature:
+const input = new TextEncoder().encode('abcd');
+const hash = xxh32d64(input, 0, input.length);
 
-	* XXH.h32
-	* XXH.h64
+console.log(hash.toString(16));
+```
 
-* In one step:
-`XXH.h32(<data>, <seed>)`
-The data can either be a string, an ArrayBuffer or a NodeJS Buffer object.
-The seed can either be a number or a UINT32 object.
+`xxh32d64` calculates two xxHash32 values in one pass using two
+different static seeds, then merges them into one `bigint`:
 
-* In several steps:
-	* instantiate a new XXH object H:
-`XXH.h32(<seed>)` or `XXH.h32()`
-The seed can be set later on with the `init` method
+```javascript
+(BigInt(highHash) << 32n) | BigInt(lowHash);
+```
 
-	* add data to the hash calculation:
-`H.update(<data>)`
-
-	* finish the calculations:
-`H.digest()`
-
-The object returned can be converted to a string with `toString(<radix>)` or a number `toNumber()`.
-Once `digest()` has been called, the object can be reused. The same seed will be used or it can be changed with `init(<seed>)`.
-
-
-## Methods
-
-* `XXH.h32()`
-	* `.init(<seed>)`
-	Initialize the XXH object with the given seed. The seed can either be a number or a UINT32 object.
-	* `.update(<data>)`
-	Add data for hashing. The data can either be a string, an ArrayBuffer or a NodeJS Buffer object.
-        * `digest()` (_UINT32_)
-	Finalize the hash calculations and returns an UINT32 object. The hash value can be retrieved with toString(<radix>).
-
-* `XXH.h64()`
-	* `.init(<seed>)`
-	Initialize the XXH object with the given seed. The seed can either be a number or a UINT64 object.
-	* `.update(<data>)`
-	Add data for hashing. The data can either be a string, an ArrayBuffer or a NodeJS Buffer object.
-	* `.digest()` (_UINT64_)
-	Finalize the hash calculations and returns an UINT64 object. The hash value can be retrieved with toString(<radix>).
-
+- `input` must be a `Uint8Array`.
+- `beg` and `end` are byte offsets.
+- The high 32-bit seed is **static**: `0x9e3779b1`.
+- The low 32-bit seed is **static**: `0x85ebca77`.
+- The return value is an unsigned `bigint`.
 
 ## License
 

@@ -1,1 +1,11 @@
-benchmark/
+/.tsimp/
+/bench/
+/src/
+/test/
+/out/*.map
+.editorconfig
+.gitignore
+.npmignore
+.prettierrc
+eslint.config.js
+tsconfig.json
