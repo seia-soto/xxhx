@@ -10,7 +10,7 @@ test('xxh32 matches xxhashjs h32', (t) => {
 
   fc.assert(
     fc.property(
-      fc.uint8Array({ minLength: 1, maxLength: 1024 }),
+      fc.uint8Array({ maxLength: 1024 }),
       (bytes) => {
         const actual = xxh32(bytes, 0, bytes.length) >>> 0;
         const expected =
